@@ -14,10 +14,12 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 /** checks an app for updates */
 public class AppUpdater {
@@ -83,6 +85,7 @@ public class AppUpdater {
         db.update(Apps.APPS)
           .set(Apps.APPS.FILENAME, newInfo.getFilename())
           .set(Apps.APPS.HASH_MD5, newInfo.getMd5())
+          .set(Apps.APPS.LAST_UPDATE, OffsetDateTime.now())
           .where(Apps.APPS.APP_ID.eq(newInfo.getAppId()))
           .execute();
 
