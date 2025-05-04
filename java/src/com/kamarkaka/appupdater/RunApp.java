@@ -38,13 +38,18 @@ public class RunApp extends BaseCliApp {
         if (appOptions.getAppId() != null) {
             appsResult = sql.where(Apps.APPS.APP_ID.eq(UUID.fromString(appOptions.getAppId()))).fetch();
         } else {
-            appsResult = sql.fetch();
+            appsResult = sql.orderBy(Apps.APPS.APP_NAME).fetch();
         }
+
+        int count = 0;
+        int size = appsResult.size();
 
         for (Record appRecord : appsResult) {
             UUID appId = appRecord.get(Apps.APPS.APP_ID, UUID.class);
             String appName = appRecord.get(Apps.APPS.APP_NAME, String.class);
             String urlBase = appRecord.get(Apps.APPS.URL_BASE, String.class);
+
+            logger.info("Updating [{}] ({}/{})...", appName, ++count, size);
 
             String urlBegin = "";
             if (appRecord.get(Apps.APPS.URL_BEGIN) != null) {

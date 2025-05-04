@@ -104,10 +104,10 @@ public class HttpClient {
 
     /** send request and read response data */
     public ResponseData execute(Request request) throws FetchErrorException {
-        logger.info("Sending {} request to {} ...", request.method(), request.url());
+        logger.debug("Sending {} request to {} ...", request.method(), request.url());
 
         try (Response response = this.client.newCall(request).execute()) {
-            logger.info("Successfully received response (code: {}, type: {}, length: {})", response.code(), response.header("Content-Type"), response.header("Content-Length", "0"));
+            logger.debug("Successfully received response (code: {}, type: {}, length: {})", response.code(), response.header("Content-Type"), response.header("Content-Length", "0"));
 
             if (!response.isSuccessful()) {
                 throw new FetchErrorException("Error receiving response, error code " + response.code());
@@ -119,19 +119,19 @@ public class HttpClient {
 
             if (contentEncodingHeader != null) {
                 if (contentEncodingHeader.toLowerCase().indexOf("gzip") >= 0) {
-                    logger.info("Response has gzip encoding...");
+                    logger.debug("Response has gzip encoding...");
                     inputStream = new GZIPInputStream(inputStream);
                 } else if (contentEncodingHeader.toLowerCase().indexOf("br") >= 0) {
-                    logger.info("Response has br encoding...");
+                    logger.debug("Response has br encoding...");
                     inputStream = new BrotliInputStream(inputStream);
                 } else if (contentEncodingHeader.toLowerCase().indexOf("deflate") >= 0) {
-                    logger.info("Response has deflate encoding...");
+                    logger.debug("Response has deflate encoding...");
                     inputStream = new DeflaterInputStream(inputStream);
                 }
             }
 
             String responseBody = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            logger.info("Successfully read all {} bytes from response", responseBody.length());
+            logger.debug("Successfully read all {} bytes from response", responseBody.length());
 
             return new ResponseData(response.code(), headers, responseBody);
         } catch(IOException ex) {
@@ -149,10 +149,10 @@ public class HttpClient {
 
     /** send request and download content as file */
     public File downloadFile(Request request, Path path) throws FetchErrorException {
-        logger.info("Downloading {} to {} ...", request.url(), path);
+        logger.debug("Downloading {} to {} ...", request.url(), path);
 
         try (Response response = this.client.newCall(request).execute()) {
-            logger.info("Successfully received response (code: {}, type: {}, length: {})", response.code(), response.header("Content-Type"), response.header("Content-Length", "0"));
+            logger.debug("Successfully received response (code: {}, type: {}, length: {})", response.code(), response.header("Content-Type"), response.header("Content-Length", "0"));
 
             if (!response.isSuccessful()) {
                 throw new FetchErrorException("Error receiving response, error code " + response.code());
@@ -161,7 +161,7 @@ public class HttpClient {
             try (InputStream in = response.body().byteStream()) {
                 String fileName = getFileName(request, response);
                 File file = Paths.get(path.toString(), fileName).toFile();
-                logger.info("Saving response contents to file {} ...", file);
+                logger.debug("Saving response contents to file {} ...", file);
 
                 try (OutputStream out = new FileOutputStream(file)) {
                     byte[] buffer = new byte[4096];
@@ -171,7 +171,7 @@ public class HttpClient {
                     }
                 }
 
-                logger.info("Successfully downloaded to {}", file);
+                logger.debug("Successfully downloaded to {}", file);
                 return file;
             }
         } catch(IOException ex) {

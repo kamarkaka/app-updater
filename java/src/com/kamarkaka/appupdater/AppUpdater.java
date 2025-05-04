@@ -38,24 +38,20 @@ public class AppUpdater {
 
     /** run update check for an app, if an output directory is specified, download the updated app there */
     public String runUpdate(String outputDir) {
-        logger.info("Updating [{}] ...", oldInfo.getAppName());
-
         AppInfo newInfo = getAppInfo();
         if (newInfo == null) {
             return "Error parsing page: " + oldInfo.getUrlBase() + oldInfo.getUrlBegin();
         }
 
-        logger.info("app(name: {}, fileName: {}, link: {})", newInfo.getAppName(), newInfo.getFilename(), newInfo.getLink());
+        logger.debug("app(name: {}, fileName: {}, link: {})", newInfo.getAppName(), newInfo.getFilename(), newInfo.getLink());
 
         boolean shouldDownload = false;
 
-        // different file names, no need to download to know there is an update
-        if (!newInfo.getFilename().equalsIgnoreCase(oldInfo.getFilename())) {
-            logger.info("Updates found for {} at {}", newInfo.getAppName(), newInfo.getLink());
-            shouldDownload = true;
-        }
-
         if (newInfo.getForceDownload()) {
+            shouldDownload = true;
+        } else if (!newInfo.getFilename().equalsIgnoreCase(oldInfo.getFilename())) {
+            // different file names, no need to download to know there is an update
+            logger.info("Updates found for {} at {}", newInfo.getAppName(), newInfo.getLink());
             shouldDownload = true;
         }
 
@@ -71,8 +67,8 @@ public class AppUpdater {
 
         newInfo.setFile(file);
 
-        logger.info("existing file hash: {}", oldInfo.getMd5());
-        logger.info("downloaded file hash: {}", newInfo.getMd5());
+        logger.debug("existing file hash: {}", oldInfo.getMd5());
+        logger.debug("downloaded file hash: {}", newInfo.getMd5());
 
         if (newInfo.getMd5().equalsIgnoreCase(oldInfo.getMd5())) {
             file.delete();
@@ -132,8 +128,8 @@ public class AppUpdater {
 
         try {
             Request request = client.buildGetRequest(url, headers);
-            logger.info("url: {}", url);
-            logger.info("request headers: {}", request.headers());
+            logger.debug("url: {}", url);
+            logger.debug("request headers: {}", request.headers());
             ResponseData response = client.execute(request);
 
             String responseBodyStr = response.getBody();
@@ -141,6 +137,9 @@ public class AppUpdater {
 
             if (matcher.find()) {
                 String link = matcher.group(1).trim();
+                // fucking asus bios/firmware site provides download url in unicode format
+                // this is a temp hack which should work for the time being
+                link = link.replace("\\u002F", "/");
 
                 if (link.startsWith("/")) {
                     link = oldInfo.getUrlBase() + link;
@@ -148,7 +147,7 @@ public class AppUpdater {
                     link = oldInfo.getUrlBase() + "/" + link;
                 }
 
-                logger.info("Successfully matched link: {}", link);
+                logger.debug("Successfully matched link: {}", link);
                 return link;
             } else {
                 logger.error("Error matching pattern {} in page {}", linkPattern, responseBodyStr);
