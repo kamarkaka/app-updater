@@ -37,5 +37,5 @@ public class Keys {
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final ForeignKey<AppPatternsRecord, AppsRecord> APP_PATTERNS__FK1_APP_ID = Internal.createForeignKey(AppPatterns.APP_PATTERNS, DSL.name("FK1_app_id"), new TableField[] { AppPatterns.APP_PATTERNS.APP_ID }, Keys.APPS_PKEY, new TableField[] { Apps.APPS.APP_ID }, true);
+    public static final ForeignKey<AppPatternsRecord, AppsRecord> APP_PATTERNS__FK1_APP_ID = Internal.createForeignKey(AppPatterns.APP_PATTERNS, DSL.name("FK1_app_id"), new TableField[] { AppPatterns.APP_PATTERNS.APP_ID }, Keys.APPS_PKEY, new TableField[] { Apps.APPS.APP_ID }, true, null, null);
 }

@@ -167,6 +167,6 @@ public class AppsRecord extends UpdatableRecordImpl<AppsRecord> {
         setHashMd5(hashMd5);
         setLastUpdate(lastUpdate);
         setForceDownload(forceDownload);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 }

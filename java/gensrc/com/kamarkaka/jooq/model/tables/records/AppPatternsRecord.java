@@ -91,6 +91,6 @@ public class AppPatternsRecord extends UpdatableRecordImpl<AppPatternsRecord> {
         setPatternId(patternId);
         setAppId(appId);
         setPattern(pattern);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 }

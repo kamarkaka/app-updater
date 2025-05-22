@@ -121,6 +121,6 @@ public class AppHeadersRecord extends UpdatableRecordImpl<AppHeadersRecord> {
         setType(type);
         setKey(key);
         setValue(value);
-        resetChangedOnNotNull();
+        resetTouchedOnNotNull();
     }
 }
