@@ -8,15 +8,6 @@ WORKDIR /app
 COPY pom.xml .
 COPY java ./java
 
-# Build the application
-ARG DB_HOST
-ARG DB_PORT
-ARG DB_NAME
-ARG DB_USER
-ARG DB_PASSWORD
-
-RUN echo "db: ${DB_HOST}:${DB_PORT}/${DB_NAME}"
-RUN echo "db user: ${DB_USER}"
 RUN mvn clean package
 
 # Use a smaller image for the final application
@@ -31,8 +22,21 @@ COPY --from=build /app/target/app-updater-1.0.0-jar-with-dependencies.jar /app/a
 # Copy the config
 COPY config/config.properties /app/config.properties
 
-# Set the entrypoint
-ENTRYPOINT ["java", "-jar", "/app/app-updater.jar", "com.kamarkaka.appupdater.RunApp",
-            "--config", "/app/config.properties",
-            "--output", "/output/",
-            "--send-email"]
+# Copy the script
+COPY run.sh /app/run.sh
+
+RUN chmod +x /app/run.sh
+
+# Create a cron job to run the script every 5 minutes
+# The `>> /var/log/cron.log 2>&1` redirects stdout and stderr to a log file inside the container
+# This is useful for debugging.
+# The `crontab -` command reads the cron job from standard input.
+RUN echo "18 0 * * * /app/run.sh >> /var/log/cron.log 2>&1" | crontab -
+
+# Create the log file and ensure it's writable by cron (optional, but good practice)
+RUN touch /var/log/cron.log && chmod 644 /var/log/cron.log
+
+# Set the entrypoint to start the cron daemon in the foreground
+# -f: Runs cron in the foreground (essential for Docker containers to keep running)
+# -L /var/log/cron.log: Logs cron daemon activity to the specified file
+CMD ["crond", "-f", "-L", "/var/log/cron.log"]

@@ -17,47 +17,63 @@
       <plugin>
         <groupId>org.jooq</groupId>
         <artifactId>jooq-codegen-maven</artifactId>
-        <version>3.18.3</version>
-
+        <version>3.19.13</version>
         <executions>
+<!--          <execution>-->
+<!--              <id>generate-xml-schema</id>-->
+<!--              <phase>generate-sources</phase>-->
+<!--              <goals>-->
+<!--                  <goal>generate</goal>-->
+<!--              </goals>-->
+<!--              <configuration>-->
+<!--                  <jdbc>-->
+<!--                      <driver>org.postgresql.Driver</driver>-->
+<!--                      <url>jdbc:postgresql://192.168.1.172:20001/app_updater</url>-->
+<!--                      <user>postgres</user>-->
+<!--                      <password>978612</password>-->
+<!--                  </jdbc>-->
+<!--                  <generator>-->
+<!--                      <name>org.jooq.codegen.XMLGenerator</name>-->
+<!--                      <database>-->
+<!--                          <inputSchema>public</inputSchema>-->
+<!--                      </database>-->
+<!--                      <target>-->
+<!--                          <directory>${project.basedir}/sql</directory>-->
+<!--                          <packageName>generated</packageName>-->
+<!--                      </target>-->
+<!--                  </generator>-->
+<!--              </configuration>-->
+<!--          </execution>-->
           <execution>
             <id>jooq-codegen</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>generate</goal>
             </goals>
+            <configuration>
+              <logging>INFO</logging>
+              <generator>
+                <database>
+                  <name>org.jooq.meta.xml.XMLDatabase</name>
+                  <properties>
+                    <property>
+                      <key>xmlFile</key>
+                      <value>${project.basedir}/sql/generated/information_schema.xml</value>
+                    </property>
+                    <property>
+                      <key>dialect</key>
+                      <value>POSTGRES</value>
+                    </property>
+                  </properties>
+                </database>
+                <target>
+                  <packageName>com.kamarkaka.jooq.model</packageName>
+                  <directory>java/gensrc</directory>
+                </target>
+              </generator>
+            </configuration>
           </execution>
         </executions>
-
-        <configuration>
-          <logging>INFO</logging>
-
-          <jdbc>
-            <driver>org.postgresql.Driver</driver>
-            <url>jdbc:postgresql://${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}</url>
-            <user>${env.DB_USER}</user>
-            <password>${env.DB_PASSWORD}</password>
-          </jdbc>
-
-          <generator>
-            <database>
-              <name>org.jooq.meta.postgres.PostgresDatabase</name>
-              <inputSchema>public</inputSchema>
-              <includes>.*</includes>
-              <excludes>
-                  UNUSED_TABLE                # This table (unqualified name) should not be generated
-                | PREFIX_.*                   # Objects with a given prefix should not be generated
-                | SECRET_SCHEMA\.SECRET_TABLE # This table (qualified name) should not be generated
-                | SECRET_ROUTINE              # This routine (unqualified name) ...
-              </excludes>
-            </database>
-            <target>
-              <packageName>com.kamarkaka.jooq.model</packageName>
-              <directory>java/gensrc</directory>
-            </target>
-          </generator>
-
-        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -80,32 +96,30 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.6.0</version>
+    </dependency>
+    <dependency>
       <groupId>com.beust</groupId>
       <artifactId>jcommander</artifactId>
       <version>1.82</version>
     </dependency>
     <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>42.6.0</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.jooq</groupId>
       <artifactId>jooq</artifactId>
-      <version>3.18.3</version>
+      <version>3.19.8</version>
     </dependency>
     <dependency>
       <groupId>org.jooq</groupId>
       <artifactId>jooq-meta</artifactId>
-      <version>3.18.3</version>
+      <version>3.19.8</version>
     </dependency>
     <dependency>
       <groupId>org.jooq</groupId>
       <artifactId>jooq-codegen</artifactId>
-      <version>3.18.3</version>
+      <version>3.19.8</version>
     </dependency>
-
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
@@ -135,11 +149,6 @@
       <groupId>com.sun.mail</groupId>
       <artifactId>jakarta.mail</artifactId>
       <version>2.0.1</version>
-    </dependency>
-    <dependency>
-      <groupId>com.beust</groupId>
-      <artifactId>jcommander</artifactId>
-      <version>1.82</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
