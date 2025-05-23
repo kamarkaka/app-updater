@@ -29,10 +29,10 @@ public class Mailer {
     /** constructor */
     public Mailer(String from) {
         Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.host", KProperties.getString("mail.smtp.host"));
         props.put("mail.smtp.port", KProperties.getString("mail.smtp.port"));
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
 
         session = Session.getInstance(props, new Authenticator() {
             @Override
