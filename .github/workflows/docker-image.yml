@@ -27,6 +27,6 @@ jobs:
         with:
           context: .
           push: true
-          tags:
-          - ${{ secrets.DOCKER_USERNAME }}/app-updater:latest
-          - ${{ secrets.DOCKER_USERNAME }}/app-updater:${{ github.sha }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/app-updater:latest
+            ${{ secrets.DOCKER_USERNAME }}/app-updater:${{ github.sha }}
