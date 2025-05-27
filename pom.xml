@@ -28,9 +28,9 @@
 <!--              <configuration>-->
 <!--                  <jdbc>-->
 <!--                      <driver>org.postgresql.Driver</driver>-->
-<!--                      <url>jdbc:postgresql://192.168.1.172:20001/app_updater</url>-->
-<!--                      <user>postgres</user>-->
-<!--                      <password>978612</password>-->
+<!--                      <url>jdbc:postgresql://${db_host}:${db_port}/${db_name}</url>-->
+<!--                      <user>${db_user}</user>-->
+<!--                      <password>${db_pass}</password>-->
 <!--                  </jdbc>-->
 <!--                  <generator>-->
 <!--                      <name>org.jooq.codegen.XMLGenerator</name>-->
